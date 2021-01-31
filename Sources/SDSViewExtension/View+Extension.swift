@@ -9,10 +9,10 @@ import Foundation
 import SwiftUI
 
 extension View {
-    func frame(_ size: CGSize) -> some View {
+    public func frame(_ size: CGSize) -> some View {
         return self.frame(width: size.width, height: size.height)
     }
-    func anyView() -> AnyView {
+    public func anyView() -> AnyView {
         return AnyView(self)
     }
 }
