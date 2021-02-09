@@ -16,3 +16,19 @@ extension View {
         return AnyView(self)
     }
 }
+
+struct ViewSizePreferenceKey: PreferenceKey {
+    static var defaultValue: CGSize = .zero
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
+}
+
+extension View {
+    public func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
+        background(
+            GeometryReader{ geom in
+                Color.clear
+                    .preference(key: ViewSizePreferenceKey.self, value: geom.size)
+            })
+            .onPreferenceChange(ViewSizePreferenceKey.self, perform: onChange)
+    }
+}
