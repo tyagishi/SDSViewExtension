@@ -23,7 +23,11 @@ struct ViewSizePreferenceKey: PreferenceKey {
 }
 
 extension View {
-    public func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
+    /// retreive child view size (via preference change)
+    /// - Parameter onChange: closure triggered when size is changed
+    /// - Parameter size: new size of view
+    /// - Returns: some View 
+    public func readSize(onChange: @escaping (_ size: CGSize) -> Void) -> some View {
         background(
             GeometryReader{ geom in
                 Color.clear
