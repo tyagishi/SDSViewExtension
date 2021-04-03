@@ -17,6 +17,7 @@ extension View {
     }
 }
 
+// MARK: for checking view size
 struct ViewSizePreferenceKey: PreferenceKey {
     static var defaultValue: CGSize = .zero
     static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
@@ -34,5 +35,21 @@ extension View {
                     .preference(key: ViewSizePreferenceKey.self, value: geom.size)
             })
             .onPreferenceChange(ViewSizePreferenceKey.self, perform: onChange)
+    }
+}
+
+// MARK: PushOutView
+extension View {
+    public func pushOutView() -> some View {
+        self.modifier(PushOutView())
+    }
+}
+
+public struct PushOutView: ViewModifier {
+    public func body(content: Content) -> some View {
+        GeometryReader { _ in
+            content
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
     }
 }
