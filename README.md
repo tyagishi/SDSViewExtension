@@ -1,3 +1,3 @@
 # SDSViewExtension
 
-A description of this package.
+Convenient View Extension collection.
