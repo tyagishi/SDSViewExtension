@@ -24,15 +24,13 @@ public struct GeometryProxyInfo: Equatable {
         && (lhs.geometryProxy.safeAreaInsets == rhs.geometryProxy.safeAreaInsets) && (lhs.geometryProxy.frame(in: .global) == rhs.geometryProxy.frame(in: .global))
     }
     
-    let name: String
-    let geometryProxy: GeometryProxy
+    public let name: String
+    public let geometryProxy: GeometryProxy
 }
 
 public struct GeomReaderInfoPreferenceKey: PreferenceKey {
     public typealias Value = [GeometryProxyInfo]
-    
     static public var defaultValue:[GeometryProxyInfo] = []
-    
     static public func reduce(value: inout [GeometryProxyInfo], nextValue: () -> [GeometryProxyInfo]) {
         value.append(contentsOf: nextValue())
     }
@@ -42,13 +40,17 @@ extension View {
     /// - Parameter onChange: closure triggered when size is changed
     /// - Parameter size: new size of view
     /// - Returns: some View
-    public func readSize(name: String, onChange: @escaping (_ geomProxies: [GeometryProxyInfo]) -> Void) -> some View {
+    public func readSize(name: String = UUID().description, onChange: @escaping (_ geomProxy: GeometryProxy) -> Void) -> some View {
         background(
             GeometryReader{ geom in
                 Color.clear
                     .preference(key: GeomReaderInfoPreferenceKey.self, value: [GeometryProxyInfo(name: name, geometryProxy: geom)])
             })
-            .onPreferenceChange(GeomReaderInfoPreferenceKey.self, perform: onChange)
+        .onPreferenceChange(GeomReaderInfoPreferenceKey.self, perform: { prefs in
+            if let pref = prefs.first(where: {$0.name == name}) {
+                onChange(pref.geometryProxy)
+            }
+        })
     }
 }
 
@@ -63,7 +65,8 @@ extension View {
     /// retreive child view size (via preference change)
     /// - Parameter onChange: closure triggered when size is changed
     /// - Parameter size: new size of view
-    /// - Returns: some View 
+    /// - Returns: some View
+    @available(*, deprecated, message: "use readSize(name:,onChange:) instead")
     public func readSize(onChange: @escaping (_ size: CGSize) -> Void) -> some View {
         background(
             GeometryReader{ geom in
