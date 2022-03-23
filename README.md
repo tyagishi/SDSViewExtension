@@ -11,6 +11,14 @@ public func token(cornerRadius: CGFloat = 8, useBackgroundColor: Bool = true, ba
 ```
 
 ## View
+get GeometryProxy
+```
+Text("Hello")
+  .readSize() { geometryProxy in
+     // do what you want with GeometryProxy (for Text)
+  }
+```
+
 set frame size with using CGSize
 
 ```
