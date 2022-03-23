@@ -17,6 +17,42 @@ extension View {
     }
 }
 
+// read general geometry size with specified coordinateSpace
+public struct GeometryProxyInfo: Equatable {
+    static public func == (lhs: GeometryProxyInfo, rhs: GeometryProxyInfo) -> Bool {
+        return (lhs.name == rhs.name) && (lhs.geometryProxy.size == rhs.geometryProxy.size)
+        && (lhs.geometryProxy.safeAreaInsets == rhs.geometryProxy.safeAreaInsets) && (lhs.geometryProxy.frame(in: .global) == rhs.geometryProxy.frame(in: .global))
+    }
+    
+    let name: String
+    let geometryProxy: GeometryProxy
+}
+
+public struct GeomReaderInfoPreferenceKey: PreferenceKey {
+    public typealias Value = [GeometryProxyInfo]
+    
+    static public var defaultValue:[GeometryProxyInfo] = []
+    
+    static public func reduce(value: inout [GeometryProxyInfo], nextValue: () -> [GeometryProxyInfo]) {
+        value.append(contentsOf: nextValue())
+    }
+}
+extension View {
+    /// retreive child view size (via preference change)
+    /// - Parameter onChange: closure triggered when size is changed
+    /// - Parameter size: new size of view
+    /// - Returns: some View
+    public func readSize(name: String, onChange: @escaping (_ geomProxies: [GeometryProxyInfo]) -> Void) -> some View {
+        background(
+            GeometryReader{ geom in
+                Color.clear
+                    .preference(key: GeomReaderInfoPreferenceKey.self, value: [GeometryProxyInfo(name: name, geometryProxy: geom)])
+            })
+            .onPreferenceChange(GeomReaderInfoPreferenceKey.self, perform: onChange)
+    }
+}
+
+
 // MARK: for checking view size
 struct ViewSizePreferenceKey: PreferenceKey {
     static var defaultValue: CGSize = .zero
