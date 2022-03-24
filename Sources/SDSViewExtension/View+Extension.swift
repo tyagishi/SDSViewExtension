@@ -40,7 +40,7 @@ extension View {
     /// - Parameter onChange: closure triggered when size is changed
     /// - Parameter size: new size of view
     /// - Returns: some View
-    public func readSize(name: String = UUID().description, onChange: @escaping (_ geomProxy: GeometryProxy) -> Void) -> some View {
+    public func readGeom(name: String = UUID().uuidString, onChange: @escaping (_ geomProxy: GeometryProxy) -> Void) -> some View {
         background(
             GeometryReader{ geom in
                 Color.clear
@@ -66,7 +66,7 @@ extension View {
     /// - Parameter onChange: closure triggered when size is changed
     /// - Parameter size: new size of view
     /// - Returns: some View
-    @available(*, deprecated, message: "use readSize(name:,onChange:) instead")
+    @available(*, deprecated, message: "use readGeom(name:,onChange:) instead")
     public func readSize(onChange: @escaping (_ size: CGSize) -> Void) -> some View {
         background(
             GeometryReader{ geom in
