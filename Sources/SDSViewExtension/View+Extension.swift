@@ -9,6 +9,9 @@ import Foundation
 import SwiftUI
 
 extension View {
+//    public func position(_ pos: CGPoint) -> some View {
+//        return self.position(x: pos.x, y: pos.y)
+//    }
     public func frame(_ size: CGSize) -> some View {
         return self.frame(width: size.width, height: size.height)
     }
