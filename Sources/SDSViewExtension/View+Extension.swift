@@ -8,6 +8,29 @@
 import Foundation
 import SwiftUI
 
+// MARK: token (from Text extension)
+extension View {
+    public func token(cornerRadius: CGFloat = 8, useBackgroundColor: Bool = true, backgroundColor: Color = .green,
+                      useBorderColor: Bool = true, borderColor: Color = .accentColor) -> some View {
+        self.modifier(TokendText(cornerRadius: cornerRadius, useBackgroundColor: useBackgroundColor,  backgroundColor: backgroundColor,
+                                 useBorderColor: useBorderColor, borderColor: borderColor))
+    }
+}
+
+public struct TokendText: ViewModifier {
+    let cornerRadius: CGFloat
+    let useBackgroundColor: Bool
+    let backgroundColor: Color
+    let useBorderColor: Bool
+    let borderColor: Color
+    public func body(content: Content) -> some View {
+        content
+            .padding(2)
+            .background(RoundedRectangle(cornerRadius: cornerRadius).fill(useBackgroundColor ? backgroundColor : .clear))
+            .overlay(RoundedRectangle(cornerRadius: cornerRadius).stroke(useBorderColor ? borderColor : .clear))
+    }
+}
+
 extension View {
 //    public func position(_ pos: CGPoint) -> some View {
 //        return self.position(x: pos.x, y: pos.y)
