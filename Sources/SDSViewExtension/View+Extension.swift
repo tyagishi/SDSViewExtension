@@ -8,6 +8,31 @@
 import Foundation
 import SwiftUI
 
+// MARK: OptionalNotificationReceive
+// onRecive only iff notificationName is given. With name == nil, view will be processed without onReceive
+extension View {
+    public func optionalOnReceive(notificationName: Notification.Name?, action: ((NotificationCenter.Publisher.Output) -> Void)? = nil) -> some View {
+        self.modifier(OptionalNotificationReceive(notificationName: notificationName, closure: action))
+    }
+}
+
+public struct OptionalNotificationReceive: ViewModifier {
+    let notificationName: Notification.Name?
+    let closure: ((NotificationCenter.Publisher.Output) -> Void)?
+
+    public func body(content: Content) -> some View {
+        if let notificationName = notificationName {
+            content
+                .onReceive(NotificationCenter.default.publisher(for: notificationName)) { notification in
+                    closure?(notification)
+                }
+        } else {
+            content
+        }
+    }
+}
+
+
 // MARK: token (from Text extension)
 extension View {
     public func token(cornerRadius: CGFloat = 8, useBackgroundColor: Bool = true, backgroundColor: Color = .green,
