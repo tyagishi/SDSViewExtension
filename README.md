@@ -3,7 +3,7 @@
 Convenient View Extension collection.
 
 ## Text
-show Text looks like Token
+### Token (show Text looks like Token)
 ```
 public func token(cornerRadius: CGFloat = 8, useBackgroundColor: Bool = true, backgroundColor: Color = .green,
                   useBorderColor: Bool = true, borderColor: Color = .accentColor)
@@ -11,7 +11,7 @@ public func token(cornerRadius: CGFloat = 8, useBackgroundColor: Bool = true, ba
 ```
 
 ## View
-get GeometryProxy
+### get GeometryProxy
 ```
 Text("Hello")
   .readSize() { geometryProxy in
@@ -19,19 +19,28 @@ Text("Hello")
   }
 ```
 
-set frame size with using CGSize
+### set frame size with using CGSize
 
 ```
 public func frame(_ size: CGSize)
 ```
 
-change to AnyView
+### change to AnyView
 ```
 public func anyView() -> AnyView
 ```
 
-change push-out View 
+### change push-out View 
 ```
 public func pushOutView()
 ```
+
+### control show/hide
+```
+let visible = false
+
+SomeView()
+  .visible(visible)
+...
+
 

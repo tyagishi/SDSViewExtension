@@ -8,6 +8,24 @@
 import Foundation
 import SwiftUI
 
+// MARK: show
+// control view show/no-show with ViewModifier
+extension View {
+    public func show(_ flag: Bool) -> some View {
+        modifier(ViewShower(showFlag: flag))
+    }
+}
+public struct ViewShower: ViewModifier {
+    let showFlag: Bool
+    public func body(content: Content) -> some View {
+        if showFlag {
+            content
+        } else {
+            EmptyView()
+        }
+    }
+}
+
 // MARK: OptionalNotificationReceive
 // onRecive only iff notificationName is given. With name == nil, view will be processed without onReceive
 extension View {
