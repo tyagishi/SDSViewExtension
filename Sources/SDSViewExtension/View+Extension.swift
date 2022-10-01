@@ -68,10 +68,9 @@ public struct TokendText: ViewModifier {
     let borderColor: Color
     public func body(content: Content) -> some View {
         content
-//            .padding(2)
-//            .background(RoundedRectangle(cornerRadius: cornerRadius).fill(useBackgroundColor ? backgroundColor : .clear))
-//            .overlay(RoundedRectangle(cornerRadius: cornerRadius).stroke(useBorderColor ? borderColor : .clear))
-            .border(.green)
+            .padding(2)
+            .background(RoundedRectangle(cornerRadius: cornerRadius).fill(useBackgroundColor ? backgroundColor : .clear))
+            .overlay(RoundedRectangle(cornerRadius: cornerRadius).strokeBorder(useBorderColor ? borderColor : .clear))
     }
 }
 
