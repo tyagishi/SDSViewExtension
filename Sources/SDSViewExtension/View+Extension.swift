@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 // MARK: show
 // control view show/no-show with ViewModifier
@@ -32,6 +33,9 @@ extension View {
     public func optionalOnReceive(notificationName: Notification.Name?, action: ((NotificationCenter.Publisher.Output) -> Void)? = nil) -> some View {
         self.modifier(OptionalNotificationReceive(notificationName: notificationName, closure: action))
     }
+    public func optionalOnReceive<P>(publisher: P?, action: @escaping (P.Output) -> Void) -> some View where P: Publisher, P.Failure == Never {
+        self.modifier(OptionalPublisherReceive(publisher: publisher, closure: action))
+    }
 }
 
 public struct OptionalNotificationReceive: ViewModifier {
@@ -43,6 +47,22 @@ public struct OptionalNotificationReceive: ViewModifier {
             content
                 .onReceive(NotificationCenter.default.publisher(for: notificationName)) { notification in
                     closure?(notification)
+                }
+        } else {
+            content
+        }
+    }
+}
+
+public struct OptionalPublisherReceive<P>: ViewModifier where P: Publisher, P.Failure == Never {
+    let publisher: P?
+    let closure: ((P.Output) -> Void)?
+
+    public func body(content: Content) -> some View {
+        if let publisher = publisher {
+            content
+                .onReceive(publisher) { output in
+                    closure?(output)
                 }
         } else {
             content

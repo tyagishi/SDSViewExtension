@@ -43,4 +43,18 @@ SomeView()
   .visible(visible)
 ...
 
+### optional onReceive
+if nil is given as NotificationName, it will be ignored. otherwise receive the notification.
+#### for NotificationCenter
+```
+SomeView()
+  .optionalOnReceive(notificationName: optionalNotificationName, action: { _ in print("called") })
 
+```
+#### for Publisher
+if nil is given as publisher, it will be ignored. otherwise published event will be received.
+```
+SomeView()
+  .optionalOnReceive(publisher: optionalPublisher, action: { _ in print("called") })
+
+```
