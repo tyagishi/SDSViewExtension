@@ -30,11 +30,11 @@ public struct ViewShower: ViewModifier {
 // MARK: OptionalNotificationReceive
 // onRecive only iff notificationName is given. With name == nil, view will be processed without onReceive
 extension View {
-    public func optionalOnReceive(notificationName: Notification.Name?, action: ((NotificationCenter.Publisher.Output) -> Void)? = nil) -> some View {
-        self.modifier(OptionalNotificationReceive(notificationName: notificationName, closure: action))
+    public func optionalOnReceive(notificationName: Notification.Name?, perform: ((NotificationCenter.Publisher.Output) -> Void)? = nil) -> some View {
+        self.modifier(OptionalNotificationReceive(notificationName: notificationName, closure: perform))
     }
-    public func optionalOnReceive<P>(publisher: P?, action: @escaping (P.Output) -> Void) -> some View where P: Publisher, P.Failure == Never {
-        self.modifier(OptionalPublisherReceive(publisher: publisher, closure: action))
+    public func optionalOnReceive<P>(_ publisher: P?, perform: @escaping (P.Output) -> Void) -> some View where P: Publisher, P.Failure == Never {
+        self.modifier(OptionalPublisherReceive(publisher: publisher, closure: perform))
     }
 }
 
