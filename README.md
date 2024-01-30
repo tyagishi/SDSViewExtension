@@ -2,15 +2,24 @@
 
 Convenient View Extension collection.
 
-## Text
-### Token (show Text looks like Token)
+## optional onReceive
+if nil is given as NotificationName, it will be ignored. otherwise receive the notification.
+### for NotificationCenter
 ```
-public func token(cornerRadius: CGFloat = 8, useBackgroundColor: Bool = true, backgroundColor: Color = .green,
-                  useBorderColor: Bool = true, borderColor: Color = .accentColor)
+SomeView()
+  .optionalOnReceive(notificationName: optionalNotificationName, action: { _ in print("called") })
+
+```
+### for Publisher
+if nil is given as publisher, it will be ignored. otherwise published event will be received.
+```
+SomeView()
+  .optionalOnReceive(publisher: optionalPublisher, action: { _ in print("called") })
 
 ```
 
 ## View
+
 ### get GeometryProxy
 ```
 Text("Hello")
@@ -41,20 +50,7 @@ let visible = false
 
 SomeView()
   .visible(visible)
-...
+```
 
-### optional onReceive
-if nil is given as NotificationName, it will be ignored. otherwise receive the notification.
-#### for NotificationCenter
-```
-SomeView()
-  .optionalOnReceive(notificationName: optionalNotificationName, action: { _ in print("called") })
 
-```
-#### for Publisher
-if nil is given as publisher, it will be ignored. otherwise published event will be received.
-```
-SomeView()
-  .optionalOnReceive(publisher: optionalPublisher, action: { _ in print("called") })
 
-```

@@ -7,97 +7,11 @@
 
 import Foundation
 import SwiftUI
-import Combine
-
-// MARK: show
-// control view show/no-show with ViewModifier
-extension View {
-    public func show(_ flag: Bool) -> some View {
-        modifier(ViewShower(showFlag: flag))
-    }
-}
-public struct ViewShower: ViewModifier {
-    let showFlag: Bool
-    public func body(content: Content) -> some View {
-        if showFlag {
-            content
-        } else {
-            EmptyView()
-        }
-    }
-}
-
-// MARK: OptionalNotificationReceive
-// onRecive only iff notificationName is given. With name == nil, view will be processed without onReceive
-extension View {
-    public func optionalOnReceive(notificationName: Notification.Name?, perform: ((NotificationCenter.Publisher.Output) -> Void)? = nil) -> some View {
-        self.modifier(OptionalNotificationReceive(notificationName: notificationName, closure: perform))
-    }
-    public func optionalOnReceive<P>(_ publisher: P?, perform: @escaping (P.Output) -> Void) -> some View where P: Publisher, P.Failure == Never {
-        self.modifier(OptionalPublisherReceive(publisher: publisher, closure: perform))
-    }
-}
-
-public struct OptionalNotificationReceive: ViewModifier {
-    let notificationName: Notification.Name?
-    let closure: ((NotificationCenter.Publisher.Output) -> Void)?
-
-    public func body(content: Content) -> some View {
-        if let notificationName = notificationName {
-            content
-                .onReceive(NotificationCenter.default.publisher(for: notificationName)) { notification in
-                    closure?(notification)
-                }
-        } else {
-            content
-        }
-    }
-}
-
-public struct OptionalPublisherReceive<P>: ViewModifier where P: Publisher, P.Failure == Never {
-    let publisher: P?
-    let closure: ((P.Output) -> Void)?
-
-    public func body(content: Content) -> some View {
-        if let publisher = publisher {
-            content
-                .onReceive(publisher) { output in
-                    closure?(output)
-                }
-        } else {
-            content
-        }
-    }
-}
-
-
-// MARK: token (from Text extension)
-extension View {
-    public func token(cornerRadius: CGFloat = 8, useBackgroundColor: Bool = true, backgroundColor: Color = .green,
-                      useBorderColor: Bool = true, borderColor: Color = .accentColor) -> some View {
-        self.modifier(TokendText(cornerRadius: cornerRadius, useBackgroundColor: useBackgroundColor,  backgroundColor: backgroundColor,
-                                 useBorderColor: useBorderColor, borderColor: borderColor))
-    }
-}
-
-public struct TokendText: ViewModifier {
-    let cornerRadius: CGFloat
-    let useBackgroundColor: Bool
-    let backgroundColor: Color
-    let useBorderColor: Bool
-    let borderColor: Color
-    public func body(content: Content) -> some View {
-        content
-            .padding(2)
-            .background(RoundedRectangle(cornerRadius: cornerRadius).fill(useBackgroundColor ? backgroundColor : .clear))
-            .overlay(RoundedRectangle(cornerRadius: cornerRadius).strokeBorder(useBorderColor ? borderColor : .clear))
-    }
-}
 
 extension View {
-//    public func position(_ pos: CGPoint) -> some View {
-//        return self.position(x: pos.x, y: pos.y)
-//    }
+    public func position(_ pos: CGPoint) -> some View {
+        return self.position(x: pos.x, y: pos.y)
+    }
     public func frame(_ size: CGSize) -> some View {
         return self.frame(width: size.width, height: size.height)
     }
@@ -106,43 +20,25 @@ extension View {
     }
 }
 
-// read general geometry size with specified coordinateSpace
-public struct GeometryProxyInfo: Equatable {
-    static public func == (lhs: GeometryProxyInfo, rhs: GeometryProxyInfo) -> Bool {
-        return (lhs.name == rhs.name) && (lhs.geometryProxy.size == rhs.geometryProxy.size)
-        && (lhs.geometryProxy.safeAreaInsets == rhs.geometryProxy.safeAreaInsets) && (lhs.geometryProxy.frame(in: .global) == rhs.geometryProxy.frame(in: .global))
-    }
-    
-    public let name: String
-    public let geometryProxy: GeometryProxy
-}
 
-public struct GeomReaderInfoPreferenceKey: PreferenceKey {
-    public typealias Value = [GeometryProxyInfo]
-    static public var defaultValue:[GeometryProxyInfo] = []
-    static public func reduce(value: inout [GeometryProxyInfo], nextValue: () -> [GeometryProxyInfo]) {
-        value.append(contentsOf: nextValue())
-    }
-}
+// MARK: deprecated (but keep for a while)
+
+// MARK: PushOutView
 extension View {
-    /// retreive child view size (via preference change)
-    /// - Parameter onChange: closure triggered when size is changed
-    /// - Parameter size: new size of view
-    /// - Returns: some View
-    public func readGeom(name: String = UUID().uuidString, onChange: @escaping (_ geomProxy: GeometryProxy) -> Void) -> some View {
-        background(
-            GeometryReader{ geom in
-                Color.clear
-                    .preference(key: GeomReaderInfoPreferenceKey.self, value: [GeometryProxyInfo(name: name, geometryProxy: geom)])
-            })
-        .onPreferenceChange(GeomReaderInfoPreferenceKey.self, perform: { prefs in
-            if let pref = prefs.first(where: {$0.name == name}) {
-                onChange(pref.geometryProxy)
-            }
-        })
+    @available(*, deprecated)
+    public func pushOutView() -> some View {
+        self.modifier(PushOutView())
     }
 }
 
+public struct PushOutView: ViewModifier {
+    public func body(content: Content) -> some View {
+        GeometryReader { _ in
+            content
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+}
 
 // MARK: for checking view size
 struct ViewSizePreferenceKey: PreferenceKey {
@@ -166,24 +62,9 @@ extension View {
     }
 }
 
-// MARK: PushOutView
-extension View {
-    public func pushOutView() -> some View {
-        self.modifier(PushOutView())
-    }
-}
-
-public struct PushOutView: ViewModifier {
-    public func body(content: Content) -> some View {
-        GeometryReader { _ in
-            content
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-    }
-}
-
 // MARK: conditional view modifier
 extension View {
+    @available(*, deprecated)
     @ViewBuilder
     public func `if`<Transform: View>(
         _ condition: Bool,
@@ -198,6 +79,7 @@ extension View {
 }
 
 extension View {
+    @available(*, deprecated)
     @ViewBuilder
     public func `if`<TrueContent: View, FalseContent: View>(
         _ condition: Bool,
@@ -209,5 +91,29 @@ extension View {
         } else {
             elseTransform(self)
         }
+    }
+}
+
+// MARK: token (from Text extension)
+extension View {
+    @available(*, deprecated)
+    public func token(cornerRadius: CGFloat = 8, useBackgroundColor: Bool = true, backgroundColor: Color = .green,
+                      useBorderColor: Bool = true, borderColor: Color = .accentColor) -> some View {
+        self.modifier(TokendText(cornerRadius: cornerRadius, useBackgroundColor: useBackgroundColor,  backgroundColor: backgroundColor,
+                                 useBorderColor: useBorderColor, borderColor: borderColor))
+    }
+}
+
+public struct TokendText: ViewModifier {
+    let cornerRadius: CGFloat
+    let useBackgroundColor: Bool
+    let backgroundColor: Color
+    let useBorderColor: Bool
+    let borderColor: Color
+    public func body(content: Content) -> some View {
+        content
+            .padding(2)
+            .background(RoundedRectangle(cornerRadius: cornerRadius).fill(useBackgroundColor ? backgroundColor : .clear))
+            .overlay(RoundedRectangle(cornerRadius: cornerRadius).strokeBorder(useBorderColor ? borderColor : .clear))
     }
 }
