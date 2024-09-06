@@ -8,6 +8,24 @@
 import Foundation
 import SwiftUI
 
+/// for using view modifier in if-else condition
+///
+/// ```
+/// SomeView()
+///    .modify {
+///        if #available(macOS 14, iOS 17, *) {
+///            $0.onlyAvailableForMacOS14()
+///        } else {
+///            $0
+///            // or $0.fallbackBelowMacOS13
+///        }
+///    }
+public extension View {
+    func modify<Content>(@ViewBuilder _ transform: (Self) -> Content) -> Content {
+        transform(self)
+    }
+}
+
 extension View {
     // provided from SwiftUI
     //public func position(_ pos: CGPoint) -> some View {

@@ -19,6 +19,19 @@ SomeView()
 ```
 
 ## View
+### modify
+for if-else modifier (but not only for)
+```
+SomeView()
+.modify {
+    if #available(macOS 14, iOS 17, *) {
+        $0.onlyAvailableForMacOS14()
+    } else {
+        $0
+        // or $0.fallbackBelowMacOS13
+    }
+}
+```
 
 ### get GeometryProxy
 ```
